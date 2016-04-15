@@ -2,7 +2,7 @@
 #include <iostream>
 
 NbodySim::NbodySim(std::size_t numParticles)
-: mass(1.0)
+: mass(100.0)
 , fastGen(false)
 , renderQuadtree(false)
 , blackHole(true)
@@ -16,7 +16,8 @@ NbodySim::NbodySim(std::size_t numParticles)
 , FPSText()
 , FPSUpdateTime(sf::Time::Zero)
 , FPSNumFrames(0)
-, FPSFont(){
+, FPSFont()
+, massText(){
     bht.setMaxCapacity(1);
     bht.setMaxLevel(100000);
     for(auto i=0u;i<numParticles;++i){
@@ -28,6 +29,10 @@ NbodySim::NbodySim(std::size_t numParticles)
     FPSText.setFont(FPSFont);
     FPSText.setPosition(bounds.width-55,bounds.height-45);
     FPSText.setCharacterSize(25u);
+    massText.setFont(FPSFont);
+    massText.setPosition(0+55,bounds.height-45);
+    massText.setCharacterSize(25u);
+    massText.setString("Mass: " + std::to_string(mass));
 }
 void NbodySim::run() noexcept{
     sf::Clock clock;
@@ -113,6 +118,7 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
         case sf::Event::KeyPressed:
             if(e.key.code == sf::Keyboard::LShift){
                 mass += 0.5;
+                massText.setString("mass: " + std::to_string(mass));
             }
             if(e.key.code == sf::Keyboard::LControl){
                 if(mass > 1.0){
@@ -120,6 +126,7 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
                 }else{
                     mass = 1;
                 }
+                massText.setString("mass: " + std::to_string(mass));
             }
             break;
         case sf::Event::MouseButtonReleased:
@@ -153,10 +160,12 @@ void NbodySim::update(sf::Time dt) noexcept{
             particles.emplace_back(Particle(pos,diceForMass(engine)));
         }
     }
+    /*
     particles.erase(std::remove_if(std::begin(particles),std::end(particles),
         [&](const Particle& p){
             return (!bounds.contains(p.getPosition().x,p.getPosition().y)) || (p.getMass() == 0.0);
     }),std::end(particles));
+     */
     bht.clear();
     for(auto& p:particles){
         if(bounds.contains(p.getPosition().x, p.getPosition().y)){
@@ -213,6 +222,7 @@ void NbodySim::render() noexcept{
     auto GUIView = win.getDefaultView();
     win.setView(GUIView);
     win.draw(FPSText);
+    win.draw(massText);
     win.setView(SIMView);
     win.display();
 }

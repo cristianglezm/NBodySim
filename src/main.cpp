@@ -2,7 +2,7 @@
 #include "NbodySim.hpp"
 
 int main(int argc, char* argv[]){
-    std::size_t numParticles = 100;
+    std::size_t numParticles = 55;
     if(argc > 1){
         numParticles = std::stoul(std::string(argv[1]));
     }

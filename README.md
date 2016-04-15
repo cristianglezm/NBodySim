@@ -2,6 +2,17 @@
 
 N-Body Simulation using a Barnes Hut.
 
+Keys:
+
+* F -> Fast generation press left mouse button to add bodies.
+* T -> To see the Barnes-Hut regions.
+* B -> To add a body fixed to Center with a high mass.
+* Left Shift -> Increases mass.
+* Left Control -> Decreases mass.
+* Arrow Keys -> Move the camera.
+* + -> Zoom in.
+* - -> Zoom out.
+
 ## Building ##
 
 Requires CMake and one of the following compilers:
@@ -12,7 +23,7 @@ Requires CMake and one of the following compilers:
 
 NBodySim requires the following dependencies:
 
-* [SFML](http://sfml-dev.org) 2.3 or newer [Not Tested]
+* [SFML](http://sfml-dev.org) 2.3 or newer
 
 Use CMake to build the project and install.
 

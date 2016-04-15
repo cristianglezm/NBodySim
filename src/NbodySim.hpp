@@ -54,6 +54,7 @@ class NbodySim{
         sf::Time FPSUpdateTime;
         std::size_t	FPSNumFrames;
         sf::Font FPSFont;
+        sf::Text massText;
 };
 
 #endif // NBODYSIM_HPP
