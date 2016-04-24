@@ -33,6 +33,8 @@ class BarnesHutTree{
         void render(sf::RenderWindow& win) const noexcept;
         const double& getMass() const noexcept;
         const sf::Vector2f& getCenterOfMass() const noexcept;
+        BarnesHutTree& operator[](const std:size_t index) noexcept;
+        const BarnesHutTree& operator[](const std:size_t index) const noexcept;
         ~BarnesHutTree() = default;
     private:
         BarnesHutTree(std::size_t lvl, const sf::FloatRect& b);

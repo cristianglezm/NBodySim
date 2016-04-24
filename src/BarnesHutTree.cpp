@@ -219,3 +219,9 @@
         }
         return index;
     }
+    BarnesHutTree& BarnesHutTree::operator[](const std:size_t index) noexcept{
+        return *nodes[index].get();
+    }
+    const BarnesHutTree& BarnesHutTree::operator[](const std:size_t index) const noexcept{
+        return *nodes[index].get();
+    }
