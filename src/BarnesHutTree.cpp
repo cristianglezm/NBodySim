@@ -115,6 +115,21 @@
         }
         return f;
     }
+    void BarnesHutTree::parallelComputeMassDistribution() noexcept{
+        std::vector<std::thread> threads;
+        if(isSplit()){
+            auto size = nodes.size() - 1;
+            for(auto i=0u;i<size;++i){
+                threads.emplace_back(std::thread([&](){
+                    nodes[i]->computeMassDistribution();
+                }));
+            }
+            nodes[3]->computeMassDistribution();
+            for(auto i=0u;i<size;++i){
+                threads[i].join();
+            }
+        }
+    }
     void BarnesHutTree::computeMassDistribution() noexcept{
         centerOfMass = sf::Vector2f();
         mass = 0.0;
@@ -219,9 +234,9 @@
         }
         return index;
     }
-    BarnesHutTree& BarnesHutTree::operator[](const std:size_t index) noexcept{
+    BarnesHutTree& BarnesHutTree::operator[](const std::size_t index) noexcept{
         return *nodes[index].get();
     }
-    const BarnesHutTree& BarnesHutTree::operator[](const std:size_t index) const noexcept{
+    const BarnesHutTree& BarnesHutTree::operator[](const std::size_t index) const noexcept{
         return *nodes[index].get();
     }

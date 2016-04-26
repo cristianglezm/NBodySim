@@ -160,24 +160,24 @@ void NbodySim::update(sf::Time dt) noexcept{
             particles.emplace_back(Particle(pos,diceForMass(engine)));
         }
     }
-    /*
     particles.erase(std::remove_if(std::begin(particles),std::end(particles),
         [&](const Particle& p){
             return (!bounds.contains(p.getPosition().x,p.getPosition().y)) || (p.getMass() == 0.0);
     }),std::end(particles));
-     */
     bht.clear();
     for(auto& p:particles){
         if(bounds.contains(p.getPosition().x, p.getPosition().y)){
             bht.insert(&p);
         }
     }
+    //bht.parallelComputeMassDistribution();
     bht.computeMassDistribution();
     if(blackHole){
         particles[0].setPosition(bounds.width / 2, bounds.height /2);
         particles[0].setMass(550);
     }
     for(auto& p1:particles){
+        p1.setForce(sf::Vector2f(0.0,0.0));
         auto force = bht.calcForce(&p1,0.0000005);
         p1.getCircleShape().setFillColor(sf::Color(force.x,255,255));
         sf::Vector2f acceleration;
@@ -188,7 +188,6 @@ void NbodySim::update(sf::Time dt) noexcept{
         velocity.y += acceleration.y * dt.asMicroseconds();
         p1.setVelocity(velocity);
         p1.move(velocity);
-        p1.setForce(sf::Vector2f(0.0,0.0));
     }
     if(blackHole){
         particles[0].setPosition(bounds.width / 2, bounds.height /2);

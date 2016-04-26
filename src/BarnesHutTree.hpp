@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <thread>
 #include <memory>
 #include <array>
 
@@ -28,13 +29,14 @@ class BarnesHutTree{
         void setMaxLevel(std::size_t maxLvl);
         inline const std::size_t& getMaxLevel() const noexcept;
         sf::Vector2f calcForce(Particle* p, double G = 6.67e-11) noexcept;
+        void parallelComputeMassDistribution() noexcept;
         void computeMassDistribution() noexcept;
         void setBounds(sf::FloatRect b) noexcept;
         void render(sf::RenderWindow& win) const noexcept;
         const double& getMass() const noexcept;
         const sf::Vector2f& getCenterOfMass() const noexcept;
-        BarnesHutTree& operator[](const std:size_t index) noexcept;
-        const BarnesHutTree& operator[](const std:size_t index) const noexcept;
+        BarnesHutTree& operator[](const std::size_t index) noexcept;
+        const BarnesHutTree& operator[](const std::size_t index) const noexcept;
         ~BarnesHutTree() = default;
     private:
         BarnesHutTree(std::size_t lvl, const sf::FloatRect& b);
