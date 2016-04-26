@@ -88,12 +88,14 @@
         if(particles.size() == 1){
             if(p!=particles[0]){
                 auto dist = distance(*p,*particles[0]);
+                if(dist > 0){
                     auto dx = particles[0]->getPosition().x - p->getPosition().x;
                     auto dy = particles[0]->getPosition().y - p->getPosition().y;
                     auto fnet = force(*p,*particles[0],G);
                     f = p->getForce();
                     f.x += fnet * dx / dist;
                     f.y += fnet * dy / dist;
+                }
             }
         }else if(isSplit()){
             auto tmp = Particle(centerOfMass,mass);
@@ -117,7 +119,10 @@
     }
     void BarnesHutTree::parallelComputeMassDistribution() noexcept{
         std::vector<std::thread> threads;
-        if(isSplit()){
+        if(particles.size() == 1){
+            centerOfMass = particles[0]->getPosition();
+            mass = particles[0]->getMass();
+        }else if(isSplit()){
             auto size = nodes.size() - 1;
             for(auto i=0u;i<size;++i){
                 threads.emplace_back(std::thread([&](){

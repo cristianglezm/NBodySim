@@ -66,8 +66,9 @@ double distance(const Particle& p1, const Particle& p2) noexcept{
 
 double force(const Particle& p1, const Particle& p2, double G) noexcept{
     auto d = distance(p1,p2);
-    static const double eps = 0.5;
-    return (G * ((p1.getMass() * p2.getMass()) / (d*d) + (eps*eps)));
+    static const double eps = 0.001;
+    //return (G * ((p1.getMass() * p2.getMass()) / (d*d) + (eps*eps)));
+    return (G * p1.getMass() * p2.getMass() / (d*d) + (eps*eps));
 }
 bool areColliding(const Particle& p1, const Particle& p2) noexcept{
     double dx = p1.getPosition().x - p2.getPosition().x;

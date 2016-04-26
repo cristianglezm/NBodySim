@@ -174,11 +174,11 @@ void NbodySim::update(sf::Time dt) noexcept{
     bht.computeMassDistribution();
     if(blackHole){
         particles[0].setPosition(bounds.width / 2, bounds.height /2);
-        particles[0].setMass(550);
+        particles[0].setMass(2550);
     }
     for(auto& p1:particles){
         p1.setForce(sf::Vector2f(0.0,0.0));
-        auto force = bht.calcForce(&p1,0.0000005);
+        auto force = bht.calcForce(&p1);
         p1.getCircleShape().setFillColor(sf::Color(force.x,255,255));
         sf::Vector2f acceleration;
         acceleration.x = force.x / p1.getMass();
