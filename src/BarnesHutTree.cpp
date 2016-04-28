@@ -1,6 +1,6 @@
 #include "BarnesHutTree.hpp"
 
-    const double BarnesHutTree::Theta = 0.5;
+    const double BarnesHutTree::Theta = 6.5;
     BarnesHutTree::BarnesHutTree(const sf::FloatRect& b)
     : mass(0.0)
     , particles()
@@ -119,15 +119,12 @@
     }
     void BarnesHutTree::parallelComputeMassDistribution() noexcept{
         std::vector<std::thread> threads;
-        if(particles.size() == 1){
-            centerOfMass = particles[0]->getPosition();
-            mass = particles[0]->getMass();
-        }else if(isSplit()){
+        if(isSplit()){
             auto size = nodes.size() - 1;
             for(auto i=0u;i<size;++i){
-                threads.emplace_back(std::thread([&](){
+                threads.emplace_back([&](){
                     nodes[i]->computeMassDistribution();
-                }));
+                });
             }
             nodes[3]->computeMassDistribution();
             for(auto i=0u;i<size;++i){

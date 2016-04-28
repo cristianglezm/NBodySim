@@ -6,8 +6,8 @@ NbodySim::NbodySim(std::size_t numParticles)
 , fastGen(false)
 , renderQuadtree(false)
 , blackHole(true)
-, win(sf::VideoMode(1080, 920), "NBodySim", sf::Style::Close)
-, bounds(0,0,1080, 920)
+, win(sf::VideoMode(1280,720), "NBodySim", sf::Style::Close)
+, bounds(0,0,1280,720)
 , bht(bounds)
 , particles()
 , diceForX(0, bounds.width)
@@ -111,7 +111,7 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
             }
             if(e.key.code == sf::Keyboard::S){
                 for(auto i=0u;i<50;++i){
-                    particles.emplace_back(Particle(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine)));
+                    particles.emplace_back(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
                 }
             }
             break;
@@ -157,7 +157,7 @@ void NbodySim::update(sf::Time dt) noexcept{
     if(fastGen){
         if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
             sf::Vector2f pos = win.mapPixelToCoords(sf::Mouse::getPosition(win));
-            particles.emplace_back(Particle(pos,diceForMass(engine)));
+            particles.emplace_back(pos,diceForMass(engine));
         }
     }
     particles.erase(std::remove_if(std::begin(particles),std::end(particles),
