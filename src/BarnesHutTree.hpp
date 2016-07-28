@@ -1,10 +1,7 @@
 #ifndef BARNES_HUT_TREE_HPP
 #define BARNES_HUT_TREE_HPP
 
-#include <algorithm>
 #include <vector>
-#include <thread>
-#include <memory>
 #include <array>
 
 #include "Particle.hpp"

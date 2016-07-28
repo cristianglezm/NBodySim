@@ -18,6 +18,7 @@
 #define PARTICLE_HPP
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 
 class Particle final{
@@ -26,7 +27,7 @@ class Particle final{
         Particle(sf::Vector2f position, float mass);
         inline const bool& isActive() const noexcept{ return active; }
         Particle& setActive(bool isActive) noexcept;
-        inline const sf::Vector2f& getPosition() const noexcept{ return cs.getPosition(); }
+        inline const sf::Vector2f& getPosition() const noexcept{ return v.position; }
         Particle& setPosition(sf::Vector2f pos) noexcept;
         Particle& setPosition(float x, float y) noexcept;
         inline const double& getMass() const noexcept{ return mass; }
@@ -40,6 +41,7 @@ class Particle final{
         Particle& setCircleShape(const sf::CircleShape& cs) noexcept;
         inline const sf::CircleShape& getCircleShape() const noexcept{ return cs; }
         inline sf::CircleShape& getCircleShape() noexcept{ return cs; }
+        inline const sf::Vertex getVertex() const noexcept{ return v; }
         friend bool operator!=(const Particle& rhs, const Particle& lhs);
         inline const std::string toString() const{
             return  "mass: " + std::to_string(mass) + 
@@ -53,6 +55,7 @@ class Particle final{
         sf::Vector2f force;
         sf::Vector2f velocity;
         sf::CircleShape cs;
+        sf::Vertex v;
 };
 
 double distance(const Particle& p1, const Particle& p2) noexcept;

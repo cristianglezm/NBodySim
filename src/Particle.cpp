@@ -12,8 +12,9 @@ Particle::Particle(sf::Vector2f position, float mass)
 , force(0.0,0.0)
 , velocity(0.0,0.0)
 , cs(1.0,15){
-    cs.setOrigin(cs.getLocalBounds().width/2,cs.getLocalBounds().height/2);
-    cs.setPosition(position);
+    //cs.setOrigin(cs.getLocalBounds().width/2,cs.getLocalBounds().height/2);
+    //cs.setPosition(position);
+    v.position = position;
 }
 Particle& Particle::setActive(bool isActive) noexcept{
     active = isActive;
@@ -24,11 +25,14 @@ Particle& Particle::addMass(double amount) noexcept{
     return *this;
 }
 Particle& Particle::setPosition(sf::Vector2f pos) noexcept{
-    cs.setPosition(pos);
+    //cs.setPosition(pos);
+    v.position = pos;
     return *this;
 }
 Particle& Particle::setPosition(float x, float y) noexcept{
-    cs.setPosition(x,y);
+    ///cs.setPosition(x,y);
+    v.position.x = x;
+    v.position.y = y;
     return *this;
 }
 Particle& Particle::setMass(double mass) noexcept{
@@ -45,7 +49,8 @@ Particle& Particle::setForce(sf::Vector2f f) noexcept{
     return *this;
 }
 Particle& Particle::move(sf::Vector2f amount) noexcept{
-    cs.move(amount);
+    //cs.move(amount);
+    v.position += amount;
     return *this;
 }
 Particle& Particle::setCircleShape(const sf::CircleShape& cs) noexcept{
@@ -56,7 +61,8 @@ bool operator!=(const Particle& rhs, const Particle& lhs){
     return (rhs.mass != lhs.mass ||
             rhs.force != lhs.force ||
             rhs.velocity != lhs.velocity ||
-            rhs.cs.getPosition() != lhs.cs.getPosition());
+            rhs.v.position != lhs.v.position);
+            //rhs.cs.getPosition() != lhs.cs.getPosition());
 }
 double distance(const Particle& p1, const Particle& p2) noexcept{
     double dx = p1.getPosition().x - p2.getPosition().x;

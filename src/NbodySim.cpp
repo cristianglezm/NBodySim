@@ -121,10 +121,10 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
                 massText.setString("mass: " + std::to_string(mass));
             }
             if(e.key.code == sf::Keyboard::LControl){
-                if(mass > 1.0){
+                if(mass > 0.5){
                     mass -= 0.5;
                 }else{
-                    mass = 1;
+                    mass = 0.5;
                 }
                 massText.setString("mass: " + std::to_string(mass));
             }
@@ -174,12 +174,11 @@ void NbodySim::update(sf::Time dt) noexcept{
     bht.computeMassDistribution();
     if(blackHole){
         particles[0].setPosition(bounds.width / 2, bounds.height /2);
-        particles[0].setMass(2550);
+        particles[0].setMass(500000);
     }
     for(auto& p1:particles){
         p1.setForce(sf::Vector2f(0.0,0.0));
         auto force = bht.calcForce(&p1);
-        p1.getCircleShape().setFillColor(sf::Color(force.x,255,255));
         sf::Vector2f acceleration;
         acceleration.x = force.x / p1.getMass();
         acceleration.y = force.y / p1.getMass();
@@ -188,9 +187,6 @@ void NbodySim::update(sf::Time dt) noexcept{
         velocity.y += acceleration.y * dt.asMicroseconds();
         p1.setVelocity(velocity);
         p1.move(velocity);
-    }
-    if(blackHole){
-        particles[0].setPosition(bounds.width / 2, bounds.height /2);
     }
 }
 void NbodySim::updateFPS(sf::Time dt) noexcept{
@@ -211,9 +207,11 @@ void NbodySim::updateFPS(sf::Time dt) noexcept{
 }
 void NbodySim::render() noexcept{
     win.clear();
-    for(auto& p:particles){
-        win.draw(p.getCircleShape());
+    sf::VertexArray va(sf::Points,particles.size());
+    for(auto i=0u;i<particles.size();++i){
+        va[i] = particles[i].getVertex();
     }
+    win.draw(va);
     if(renderQuadtree){
         bht.render(win);
     }
