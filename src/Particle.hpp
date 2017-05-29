@@ -20,6 +20,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <string>
+#include <cmath>
 
 class Particle final{
     public:
