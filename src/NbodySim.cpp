@@ -6,13 +6,13 @@ NbodySim::NbodySim(std::size_t numParticles)
 , fastGen(false)
 , renderQuadtree(false)
 , blackHole(true)
-, win(sf::VideoMode(1280,720), "NBodySim", sf::Style::Close)
-, bounds(0,0,1280,720)
+, win(sf::VideoMode(1290,720), "NBodySim", sf::Style::Close)
+, bounds(0,0,1290,720)
 , bht(bounds)
 , particles()
 , diceForX(0, bounds.width)
 , diceForY(0, bounds.height)
-, diceForMass(1,20)
+, diceForMass(10,mass)
 , FPSText()
 , sizeText()
 , FPSUpdateTime(sf::Time::Zero)
@@ -121,15 +121,12 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
             break;
         case sf::Event::KeyPressed:
             if(e.key.code == sf::Keyboard::LShift){
-                mass += 0.5;
+                mass += 10.0;
                 massText.setString("mass: " + std::to_string(mass));
             }
             if(e.key.code == sf::Keyboard::LControl){
-                if(mass > 0.5){
-                    mass -= 0.5;
-                }else{
-                    mass = 0.5;
-                }
+                mass -= 10.0;
+		mass = std::max(10.0f, mass);
                 massText.setString("mass: " + std::to_string(mass));
             }
             break;
@@ -178,7 +175,7 @@ void NbodySim::update(sf::Time dt) noexcept{
     if(blackHole && !particles.empty()){
         //particles[0].setPosition(bounds.width / 2, bounds.height /2);
         particles[0].setColor(sf::Color::Red);
-        particles[0].setMass(5000000);
+        particles[0].setMass(mass * 100);
     }
     for(auto& p1:particles){
         p1.setForce(sf::Vector2f(0.f,0.f));

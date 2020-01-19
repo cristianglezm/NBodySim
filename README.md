@@ -6,8 +6,8 @@ Keys:
 
 * F -> Fast generation press left mouse button to add bodies.
 * T -> To see the Barnes-Hut regions.
-* B -> To add a body fixed to its position with a mass 4 times current mass. \[implement this\]
-* Left Shift -> Increases mass. \[increase the rate\]
+* B -> To add a body fixed to its position with a mass 100 times current mass.
+* Left Shift -> Increases mass.
 * Left Control -> Decreases mass.
 * Arrow Keys -> Move the camera.
 * \+ key -> Zoom in.
