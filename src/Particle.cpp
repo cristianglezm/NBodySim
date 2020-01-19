@@ -1,21 +1,17 @@
 #include "Particle.hpp"
 
 Particle::Particle()
-: mass(15)
+: sf::Vertex({0.f,0.f}, sf::Color::White)
+, mass(15)
 , active(true)
 , force(0.0,0.0)
-, velocity(0.0,0.0)
-, cs(1.0,15){}
-Particle::Particle(sf::Vector2f position, float mass)
-: mass(mass)
+, velocity(0.0,0.0){}
+Particle::Particle(const sf::Vector2f& position, float mass)
+: sf::Vertex(position, sf::Color::White)
+, mass(mass)
 , active(true)
 , force(0.0,0.0)
-, velocity(0.0,0.0)
-, cs(1.0,15){
-    //cs.setOrigin(cs.getLocalBounds().width/2,cs.getLocalBounds().height/2);
-    //cs.setPosition(position);
-    v.position = position;
-}
+, velocity(0.0,0.0){}
 Particle& Particle::setActive(bool isActive) noexcept{
     active = isActive;
     return *this;
@@ -24,45 +20,39 @@ Particle& Particle::addMass(double amount) noexcept{
     mass += amount;
     return *this;
 }
-Particle& Particle::setPosition(sf::Vector2f pos) noexcept{
-    //cs.setPosition(pos);
-    v.position = pos;
+Particle& Particle::setPosition(const sf::Vector2f& pos) noexcept{
+    sf::Vertex::position = pos;
     return *this;
 }
 Particle& Particle::setPosition(float x, float y) noexcept{
-    ///cs.setPosition(x,y);
-    v.position.x = x;
-    v.position.y = y;
+    sf::Vertex::position = sf::Vector2f(x,y);
     return *this;
+}
+Particle& Particle::setColor(const sf::Color& c) noexcept{
+   sf::Vertex::color = c;
+   return *this;
 }
 Particle& Particle::setMass(double mass) noexcept{
     this->mass = mass;
-    //cs.setRadius(mass);
     return *this;
 }
-Particle& Particle::setVelocity(sf::Vector2f vel) noexcept{
-    velocity = vel;
+Particle& Particle::setVelocity(const sf::Vector2f& vel) noexcept{
+    this->velocity = vel;
     return *this;
 }
-Particle& Particle::setForce(sf::Vector2f f) noexcept{
+Particle& Particle::setForce(const sf::Vector2f& f) noexcept{
     force = f;
     return *this;
 }
-Particle& Particle::move(sf::Vector2f amount) noexcept{
-    //cs.move(amount);
-    v.position += amount;
+Particle& Particle::move(const sf::Vector2f& amount) noexcept{
+    sf::Vertex::position += amount;
     return *this;
 }
-Particle& Particle::setCircleShape(const sf::CircleShape& cs) noexcept{
-    this->cs = cs;
-    return *this;
-}
-bool operator!=(const Particle& rhs, const Particle& lhs){
-    return (rhs.mass != lhs.mass ||
-            rhs.force != lhs.force ||
-            rhs.velocity != lhs.velocity ||
-            rhs.v.position != lhs.v.position);
-            //rhs.cs.getPosition() != lhs.cs.getPosition());
+bool operator!=(const Particle& lhs, const Particle& rhs){
+    return (lhs.mass != rhs.mass ||
+            lhs.force != rhs.force ||
+            lhs.velocity != rhs.velocity ||
+            lhs.position != rhs.position);
 }
 double distance(const Particle& p1, const Particle& p2) noexcept{
     double dx = p1.getPosition().x - p2.getPosition().x;

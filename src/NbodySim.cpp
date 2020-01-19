@@ -14,23 +14,27 @@ NbodySim::NbodySim(std::size_t numParticles)
 , diceForY(0, bounds.height)
 , diceForMass(1,20)
 , FPSText()
+, sizeText()
 , FPSUpdateTime(sf::Time::Zero)
 , FPSNumFrames(0)
 , FPSFont()
 , massText(){
     bht.setMaxCapacity(1);
     bht.setMaxLevel(100000);
+    particles.reserve(numParticles);
     for(auto i=0u;i<numParticles;++i){
-        auto p = Particle(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
-        p.getCircleShape().setFillColor(sf::Color(255,255,255));
-        particles.emplace_back(p);
+        particles.emplace_back(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
     }
     FPSFont.loadFromFile("data/Outwrite.ttf");
     FPSText.setFont(FPSFont);
     FPSText.setPosition(bounds.width-55,bounds.height-45);
     FPSText.setCharacterSize(25u);
     massText.setFont(FPSFont);
-    massText.setPosition(0+55,bounds.height-45);
+    sizeText.setFont(FPSFont);
+    sizeText.setPosition(bounds.width - 255, 10);
+    sizeText.setCharacterSize(25u);
+    sizeText.setString("Particles: " + std::to_string(numParticles));
+    massText.setPosition(15,bounds.height-45);
     massText.setCharacterSize(25u);
     massText.setString("Mass: " + std::to_string(mass));
 }
@@ -135,9 +139,7 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
             }
             if((e.mouseButton.button == sf::Mouse::Button::Left) && !fastGen){
                 sf::Vector2f pos = win.mapPixelToCoords(sf::Mouse::getPosition(win));
-                auto p = Particle(pos,mass);
-                p.getCircleShape().setFillColor(sf::Color(255,255,255));
-                particles.emplace_back(p);
+                particles.emplace_back(pos,mass);
             }
             break;
         default:
@@ -164,20 +166,22 @@ void NbodySim::update(sf::Time dt) noexcept{
         [&](const Particle& p){
             return (!bounds.contains(p.getPosition().x,p.getPosition().y)) || (p.getMass() == 0.0);
     }),std::end(particles));
+    sizeText.setString("Particles: " + std::to_string(particles.size()));
     bht.clear();
     for(auto& p:particles){
         if(bounds.contains(p.getPosition().x, p.getPosition().y)){
             bht.insert(&p);
         }
     }
-    //bht.parallelComputeMassDistribution();
-    bht.computeMassDistribution();
-    if(blackHole){
-        particles[0].setPosition(bounds.width / 2, bounds.height /2);
-        particles[0].setMass(500000);
+    bht.parallelComputeMassDistribution();
+    //bht.computeMassDistribution();
+    if(blackHole && !particles.empty()){
+        //particles[0].setPosition(bounds.width / 2, bounds.height /2);
+        particles[0].setColor(sf::Color::Red);
+        particles[0].setMass(5000000);
     }
     for(auto& p1:particles){
-        p1.setForce(sf::Vector2f(0.0,0.0));
+        p1.setForce(sf::Vector2f(0.f,0.f));
         auto force = bht.calcForce(&p1);
         sf::Vector2f acceleration;
         acceleration.x = force.x / p1.getMass();
@@ -206,12 +210,16 @@ void NbodySim::updateFPS(sf::Time dt) noexcept{
         }
 }
 void NbodySim::render() noexcept{
-    win.clear();
-    sf::VertexArray va(sf::Points,particles.size());
-    for(auto i=0u;i<particles.size();++i){
-        va[i] = particles[i].getVertex();
+    win.clear(sf::Color::Black);
+    ///*
+    std::vector<sf::Vertex> va;
+    va.reserve(particles.size());
+    for(auto& p:particles){
+        va.emplace_back(p.getPosition(),p.color);
     }
-    win.draw(va);
+    win.draw(va.data(), va.size(),sf::Points);
+    //*/
+    //win.draw(particles.data(), particles.size(), sf::Points);
     if(renderQuadtree){
         bht.render(win);
     }
@@ -220,6 +228,7 @@ void NbodySim::render() noexcept{
     win.setView(GUIView);
     win.draw(FPSText);
     win.draw(massText);
+    win.draw(sizeText);
     win.setView(SIMView);
     win.display();
 }

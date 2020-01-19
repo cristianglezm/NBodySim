@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////
-// Copyright 2016 Cristian Glez <Cristian.glez.m@gmail.com>
+// Copyright 2014-2019 Cristian Glez <Cristian.glez.m@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,8 +51,9 @@ class NbodySim{
         std::uniform_real_distribution<> diceForMass;
         static const sf::Time TimePerFrame;
         sf::Text FPSText;
+        sf::Text sizeText;
         sf::Time FPSUpdateTime;
-        std::size_t	FPSNumFrames;
+        std::size_t FPSNumFrames;
         sf::Font FPSFont;
         sf::Text massText;
 };

@@ -22,7 +22,7 @@
     void BarnesHutTree::insert(Particle* p) noexcept{
         if (isSplit()){
             int index = getNodeIndex(p);
-            if (index != -1) {
+            if(index != -1 ){
                 nodes[index]->insert(p);
                 return;
             }
@@ -78,12 +78,22 @@
     }
     void BarnesHutTree::setMaxCapacity(std::size_t maxCap){
         maxCapacity = maxCap;
+        if(isSplit()){
+            for(auto i=0u;i<nodes.size();++i){
+                nodes[i]->setMaxCapacity(maxCapacity);
+            }
+        }
     }
     const std::size_t& BarnesHutTree::getMaxCapacity() const noexcept{
         return maxCapacity;
     }
     void BarnesHutTree::setMaxLevel(std::size_t maxLvl){
         maxLevel = maxLvl;
+        if(isSplit()){
+            for(auto i=0u;i<nodes.size();++i){
+                nodes[i]->setMaxLevel(maxLevel);
+            }
+        }
     }
     const std::size_t& BarnesHutTree::getMaxLevel() const noexcept{
         return maxLevel;
@@ -129,18 +139,19 @@
         if(isSplit()){
             auto size = 3u;
             for(auto i=0u;i<size;++i){
-                threads.emplace_back([&](){
+                threads.emplace_back([=](std::array<std::unique_ptr<BarnesHutTree>,4>& nodes){
                     nodes[i]->computeMassDistribution();
-                    mass += nodes[i]->getMass();
-                    centerOfMass += nodes[i]->getCenterOfMass() * static_cast<float>(nodes[i]->getMass());
-                });
+                },std::ref(nodes));
             }
             nodes[3]->computeMassDistribution();
             for(auto i=0u;i<size;++i){
                 threads[i].join();
             }
-            mass += nodes[3]->getMass();
-            centerOfMass += nodes[3]->getCenterOfMass() * static_cast<float>(nodes[3]->getMass());
+            for(const auto& n:nodes){
+                mass += n->getMass();
+                centerOfMass += n->getCenterOfMass() * static_cast<float>(n->getMass());
+            }
+            centerOfMass /= static_cast<float>(mass);
         }
     }
     void BarnesHutTree::computeMassDistribution() noexcept{
@@ -212,10 +223,10 @@
         }
     }
     void BarnesHutTree::split() noexcept{
-        int subWidth = (int)(bounds.width / 2);
-        int subHeight = (int)(bounds.height / 2);
-        int x = (int)bounds.left;
-        int y = (int)bounds.top;
+        int subWidth = static_cast<int>(bounds.width / 2);
+        int subHeight = static_cast<int>(bounds.height / 2);
+        int x = static_cast<int>(bounds.left);
+        int y = static_cast<int>(bounds.top);
         nodes[0].reset(new BarnesHutTree((level+1), sf::FloatRect(x + subWidth, y, subWidth, subHeight)));
         nodes[1].reset(new BarnesHutTree((level+1), sf::FloatRect(x, y, subWidth, subHeight)));
         nodes[2].reset(new BarnesHutTree((level+1), sf::FloatRect(x, y + subHeight, subWidth, subHeight)));
@@ -235,7 +246,7 @@
         sf::FloatRect leftTop(x,y,subWidth,subHeight);
         sf::FloatRect leftBottom(x,y+subHeight,subWidth,subHeight);
         sf::FloatRect rightBottom(x+subWidth,y+subHeight,subWidth,subHeight);
-        
+
         if(rightTop.contains(p->getPosition())){
             index = 0;
         }else if(leftTop.contains(p->getPosition())){

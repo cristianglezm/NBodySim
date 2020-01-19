@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////
-// Copyright 2014-2016 Cristian Glez <Cristian.glez.m@gmail.com>
+// Copyright 2014-2019 Cristian Glez <Cristian.glez.m@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,28 +23,27 @@
 #include <string>
 #include <cmath>
 
-class Particle final{
+class Particle : public sf::Vertex{
     public:
         Particle();
-        Particle(sf::Vector2f position, float mass);
-        inline const bool& isActive() const noexcept{ return active; }
+        Particle(const sf::Vector2f& position, float mass);
+        Particle(const Particle& p) noexcept = default;
+        constexpr Particle& operator=(const Particle& p) noexcept = default;
+        inline bool isActive() const noexcept{ return active; }
         Particle& setActive(bool isActive) noexcept;
-        inline const sf::Vector2f& getPosition() const noexcept{ return v.position; }
-        Particle& setPosition(sf::Vector2f pos) noexcept;
+        inline const sf::Vector2f& getPosition() const noexcept{ return position; }
+        Particle& setPosition(const sf::Vector2f& pos) noexcept;
         Particle& setPosition(float x, float y) noexcept;
+        Particle& setColor(const sf::Color& c) noexcept;
         inline const double& getMass() const noexcept{ return mass; }
         Particle& setMass(double mass) noexcept;
         Particle& addMass(double amount) noexcept;
-        Particle& setVelocity(sf::Vector2f vel) noexcept;
+        Particle& setVelocity(const sf::Vector2f& vel) noexcept;
         inline const sf::Vector2f& getVelocity() const noexcept{ return velocity; }
-        Particle& setForce(sf::Vector2f f) noexcept;
+        Particle& setForce(const sf::Vector2f& f) noexcept;
         inline const sf::Vector2f& getForce() const noexcept{ return force; }
-        Particle& move(sf::Vector2f amount) noexcept;
-        Particle& setCircleShape(const sf::CircleShape& cs) noexcept;
-        inline const sf::CircleShape& getCircleShape() const noexcept{ return cs; }
-        inline sf::CircleShape& getCircleShape() noexcept{ return cs; }
-        inline const sf::Vertex getVertex() const noexcept{ return v; }
-        friend bool operator!=(const Particle& rhs, const Particle& lhs);
+        Particle& move(const sf::Vector2f& amount) noexcept;
+        friend bool operator!=(const Particle& lhs, const Particle& rhs);
         inline const std::string toString() const{
             return  "mass: " + std::to_string(mass) + 
                     " force: " + std::to_string(force.x) + "," + std::to_string(force.y) + 
@@ -56,8 +55,6 @@ class Particle final{
         bool active;
         sf::Vector2f force;
         sf::Vector2f velocity;
-        sf::CircleShape cs;
-        sf::Vertex v;
 };
 
 double distance(const Particle& p1, const Particle& p2) noexcept;
