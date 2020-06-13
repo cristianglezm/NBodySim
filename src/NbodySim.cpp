@@ -126,7 +126,7 @@ void NbodySim::handleInput(sf::Event& e) noexcept{
             }
             if(e.key.code == sf::Keyboard::LControl){
                 mass -= 10.0;
-		mass = std::max(10.0f, mass);
+                mass = std::max(10.0f, mass);
                 massText.setString("mass: " + std::to_string(mass));
             }
             break;
@@ -173,7 +173,6 @@ void NbodySim::update(sf::Time dt) noexcept{
     bht.parallelComputeMassDistribution();
     //bht.computeMassDistribution();
     if(blackHole && !particles.empty()){
-        //particles[0].setPosition(bounds.width / 2, bounds.height /2);
         particles[0].setColor(sf::Color::Red);
         particles[0].setMass(mass * 100);
     }
@@ -208,15 +207,13 @@ void NbodySim::updateFPS(sf::Time dt) noexcept{
 }
 void NbodySim::render() noexcept{
     win.clear(sf::Color::Black);
-    ///*
     std::vector<sf::Vertex> va;
     va.reserve(particles.size());
     for(auto& p:particles){
         va.emplace_back(p.getPosition(),p.color);
     }
     win.draw(va.data(), va.size(),sf::Points);
-    //*/
-    //win.draw(particles.data(), particles.size(), sf::Points);
+    //win.draw(particles.data(), particles.size(), sf::Points); // sfml cache problem?
     if(renderQuadtree){
         bht.render(win);
     }
