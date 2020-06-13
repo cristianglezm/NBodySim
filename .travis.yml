@@ -1,5 +1,6 @@
 language: cpp
-sudo: false
+os: linux
+dist: xenial
 compiler:
   - gcc
 services:
@@ -47,7 +48,7 @@ install:
 - cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/install .. && make && make install && cd ..
 
 script:
-- mkdir build && cd build
+- cd .. && mkdir build && cd build
 - cmake -DSFML_ROOT=$SFML_ROOT -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
 - make
 - make install
