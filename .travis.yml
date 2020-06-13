@@ -47,7 +47,7 @@ install:
 - cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/install .. && make && make install && cd ..
 
 script:
-- cd ../../.. && mkdir build && cd build
+- mkdir build && cd build
 - cmake -DSFML_ROOT=$SFML_ROOT -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
 - make
 - make install

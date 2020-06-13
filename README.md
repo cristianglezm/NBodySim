@@ -1,5 +1,7 @@
 # NBodySim #
 
+[![Build Status](https://travis-ci.org/cristianglezm/NBodySim.svg?branch=master)](https://travis-ci.org/cristianglezm/NBodySim)
+
 N-Body Simulation using a Barnes Hut.
 
 Keys:
