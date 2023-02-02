@@ -24,7 +24,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: install linux dependencies
-      if: runner.os == "Linux"
+      if: runner.os == 'Linux'
       run: |
         sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
         git clone https://github.com/SFML/SFML && cd SFML && git checkout 2.6.x
