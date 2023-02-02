@@ -47,5 +47,5 @@ jobs:
       shell: bash
       run: |
         mkdir build && cd build
-        cmake -DSFML_ROOT=${GITHUB_WORKSPACE]/SFML/build/install -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
+        cmake -DSFML_ROOT=${GITHUB_WORKSPACE}/SFML/build/install -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
         make -j4 install
