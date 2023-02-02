@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux GCC, os: ubuntu-latest, prefix: xvfb-run -a }
+        - { name: LinuxGCC, os: ubuntu-latest, prefix: xvfb-run -a }
         config:
         - { name: Shared}
         type:
@@ -23,17 +23,27 @@ jobs:
     - name: checkout code
       uses: actions/checkout@v3
 
+    - name: cache
+      uses: actions/cache@v3.2.4
+      with:
+        path: $GITHUB_WORKSPACE/SFML/build/install
+        key: ${{ matrix.platform.name }}-${{ matrix.type.name }}-${{ matrix.config.name }}
+
     - name: install linux dependencies
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+
+    - name: build sfml
+      if: runner.os == 'Linux' && steps.cache.outputs.cache-hit != 'true'
+      run: |
         git clone https://github.com/SFML/SFML && cd SFML && git checkout 2.6.x
         export SFML_ROOT=$(pwd)/build/install
         mkdir build && cd build
         cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DCMAKE_BUILD_TYPE=${{ matrix.type.name }} .. && make -j4 install && cd ../..
 
     - name: configure and build
-      if: matrix.platform.name == "LinuxGCC"
+      if: matrix.platform.name == 'LinuxGCC'
       shell: bash
       run: |
         mkdir build && cd build
