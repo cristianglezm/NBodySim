@@ -1,6 +1,6 @@
 # NBodySim #
 
-[![Build Status](https://travis-ci.org/cristianglezm/NBodySim.svg?branch=master)](https://travis-ci.org/cristianglezm/NBodySim)
+[![Build Status](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml/badge.svg)](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml)
 
 N-Body Simulation using a Barnes Hut.
 
