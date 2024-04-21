@@ -31,7 +31,7 @@ add_executable(NBodySim ${NBodySim_SOURCES})
 ################################################################################
 
 #sfml
-find_package(SFML 2.3 COMPONENTS graphics window system network audio REQUIRED)
+find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 if(SFML_FOUND)
 	include_directories(${SFML_INCLUDE_DIR})
 	target_link_libraries(NBodySim ${SFML_LIBRARIES})
@@ -66,7 +66,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
 endif()

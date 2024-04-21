@@ -1,6 +1,6 @@
 # NBodySim #
 
-[![Build Status](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml/badge.svg)](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml)
+[![Build Status](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml/badge.svg)](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 N-Body Simulation using a Barnes Hut.
 
@@ -14,6 +14,8 @@ Keys:
 * Arrow Keys -> Move the camera.
 * \+ key -> Zoom in.
 * \- key -> Zoom out.
+
+[![video](https://img.youtube.com/vi/AnCReCPR28o/maxresdefault.jpg)](https://youtu.be/AnCReCPR28o)
 
 ## Building ##
 
@@ -29,9 +31,8 @@ NBodySim requires the following dependencies:
 
 Use CMake to build the project and install.
 
-```
+```bash
 mkdir build && cd build
 cmake -DSFML_ROOT=<sfml root> ..
-make -j3
-make install
+make -j4
 ```

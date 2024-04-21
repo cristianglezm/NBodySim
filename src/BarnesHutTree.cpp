@@ -20,7 +20,7 @@
         }
     }
     void BarnesHutTree::insert(Particle* p) noexcept{
-        if (isSplit()){
+        if(isSplit()){
             int index = getNodeIndex(p);
             if(index != -1 ){
                 nodes[index]->insert(p);

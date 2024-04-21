@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <array>
-
+#include <memory>
 #include "Particle.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
