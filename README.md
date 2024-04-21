@@ -1,6 +1,6 @@
 # NBodySim #
 
-[![Build Status](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml/badge.svg)](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![ci](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/cristianglezm/NBodySim/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 N-Body Simulation using a Barnes Hut.
 
