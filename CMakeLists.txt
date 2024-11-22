@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.14)
+cmake_minimum_required(VERSION 3.24)
 
 ################################################################################
 ### User options.
@@ -31,15 +31,15 @@ add_executable(NBodySim ${NBodySim_SOURCES})
 ################################################################################
 
 #sfml
-find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
+find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 if(SFML_FOUND)
 	include_directories(${SFML_INCLUDE_DIR})
 	target_link_libraries(NBodySim ${SFML_LIBRARIES})
 endif(SFML_FOUND)
 
 if(WIN32)
-	FILE(GLOB_RECURSE SFML_DEBUG_DLLS "${SFML_ROOT}/bin/sfml-*-d-2.dll")
-	FILE(GLOB_RECURSE SFML_RELEASE_DLLS "${SFML_ROOT}/bin/*-2.dll")
+	FILE(GLOB_RECURSE SFML_DEBUG_DLLS "${SFML_ROOT}/bin/sfml-*-d-3.dll")
+	FILE(GLOB_RECURSE SFML_RELEASE_DLLS "${SFML_ROOT}/bin/*-3.dll")
 	if(NOT SFML_DEBUG_DLLS STREQUAL "")
 		LIST(REMOVE_ITEM SFML_RELEASE_DLLS ${SFML_DEBUG_DLLS})
 	endif(NOT SFML_DEBUG_DLLS STREQUAL "")
@@ -49,11 +49,11 @@ endif(WIN32)
 ### Enable C++17 and warnings
 ################################################################################
 
-SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++20")
 
 if(WIN32)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -lpthread -static-libgcc -static-libstdc++ -mwindows")
