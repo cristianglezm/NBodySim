@@ -11,6 +11,7 @@ NbodySim::NbodySim(std::size_t numParticles)
 , FPSText(FPSFont, "", 25u)
 , sizeText(FPSFont, "Particles: " + std::to_string(numParticles), 25u)
 , massText(FPSFont, "Mass: " + std::to_string(mass), 25u)
+, m_particleVertices(sf::VertexBuffer::Usage::Stream)
 , fastGen(false)
 , renderQuadtree(false)
 , blackHole(true)
@@ -191,13 +192,18 @@ void NbodySim::updateFPS(sf::Time dt) noexcept{
 }
 void NbodySim::render() noexcept{
     win.clear(sf::Color::Black);
-    std::vector<sf::Vertex> va;
-    va.reserve(particles.size());
-    for(const auto& p:particles){
-        va.push_back(p);
+    if(!particles.empty()){
+        if(m_particleVertices.getVertexCount() != particles.size()){
+            m_particleVertices.create(particles.size());
+        }
+        std::vector<sf::Vertex> vertexData;
+        vertexData.reserve(particles.size());
+        for(const auto& p : particles){
+            vertexData.push_back(p);
+        }
+        m_particleVertices.update(vertexData.data());
+        win.draw(m_particleVertices);
     }
-    win.draw(va.data(), va.size(), sf::PrimitiveType::Points);
-    //win.draw(particles.data(), particles.size(), sf::Points); // sfml cache problem?
     if(renderQuadtree){
         bht.render(win);
     }

@@ -3,7 +3,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may not a copy of the License at
+// You may obtain a copy of the License at
 //
 //  http://www.apache.org/licenses/LICENSE-2.0
 //
@@ -18,6 +18,7 @@
 #define NBODYSIM_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/VertexBuffer.hpp>
 
 #include <vector>
 #include <string>
@@ -46,6 +47,7 @@ class NbodySim{
         sf::Text FPSText;
         sf::Text sizeText;
         sf::Text massText;
+        sf::VertexBuffer m_particleVertices;
         bool fastGen;
         bool renderQuadtree;
         bool blackHole;
