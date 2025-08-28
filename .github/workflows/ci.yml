@@ -21,11 +21,11 @@ jobs:
           config: { name: Shared }
     steps:
     - name: checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: cache
       id: cache-sfml
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: SFML/build/install
         key: ${{ matrix.platform.name }}-${{ matrix.type.name }}-${{ matrix.config.name }}

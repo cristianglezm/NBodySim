@@ -115,7 +115,7 @@
         }else if(isSplit()){
             auto tmp = Particle(centerOfMass,mass);
             auto r = distance(*p,tmp);
-            auto d = bounds.height;
+            auto d = bounds.size.y;
             if((d/r) <= Theta){
                     auto dx = centerOfMass.x - p->getPosition().x;
                     auto dy = centerOfMass.y - p->getPosition().y;
@@ -172,23 +172,23 @@
     void BarnesHutTree::setBounds(sf::FloatRect b) noexcept{
         bounds = b;
         if(isSplit()){
-            int subWidth = static_cast<int>(bounds.width / 2);
-            int subHeight = static_cast<int>(bounds.height / 2);
-            int x = static_cast<int>(bounds.left);
-            int y = static_cast<int>(bounds.top);
-            nodes[0]->setBounds(sf::FloatRect(x + subWidth, y, subWidth, subHeight));
-            nodes[1]->setBounds(sf::FloatRect(x, y, subWidth, subHeight));
-            nodes[2]->setBounds(sf::FloatRect(x, y + subHeight, subWidth, subHeight));
-            nodes[3]->setBounds(sf::FloatRect(x + subWidth, y + subHeight, subWidth, subHeight));
+            float subWidth = bounds.size.x / 2.f;
+            float subHeight = bounds.size.y / 2.f;
+            float x = bounds.position.x;
+            float y = bounds.position.y;
+            nodes[0]->setBounds({{x + subWidth, y}, {subWidth, subHeight}});
+            nodes[1]->setBounds({{x, y}, {subWidth, subHeight}});
+            nodes[2]->setBounds({{x, y + subHeight}, {subWidth, subHeight}});
+            nodes[3]->setBounds({{x + subWidth, y + subHeight}, {subWidth, subHeight}});
         }
     }
     void BarnesHutTree::render(sf::RenderWindow& win) const noexcept{
-        sf::RectangleShape boundsShape(sf::Vector2f(bounds.width,bounds.height));
-        boundsShape.setPosition(bounds.left,bounds.top);
+        sf::RectangleShape boundsShape(bounds.size);
+        boundsShape.setPosition(bounds.position);
         int b,g,r;
         b = level > 255 ? 255: level+mass;
-        g = level > 255 ? 255: level+bounds.top;
-        r = level > 255 ? 255: level+(bounds.top+bounds.height);
+        g = level > 255 ? 255: level+ static_cast<int>(bounds.position.y);
+        r = level > 255 ? 255: level+( static_cast<int>(bounds.position.y)+ static_cast<int>(bounds.size.y));
         if(b> 255 || b <0){b=255;}
         if(g> 255 || g <0){g=255;}
         if(r> 255 || r <0){r=255;}
@@ -223,14 +223,14 @@
         }
     }
     void BarnesHutTree::split() noexcept{
-        int subWidth = static_cast<int>(bounds.width / 2);
-        int subHeight = static_cast<int>(bounds.height / 2);
-        int x = static_cast<int>(bounds.left);
-        int y = static_cast<int>(bounds.top);
-        nodes[0].reset(new BarnesHutTree((level+1), sf::FloatRect(x + subWidth, y, subWidth, subHeight)));
-        nodes[1].reset(new BarnesHutTree((level+1), sf::FloatRect(x, y, subWidth, subHeight)));
-        nodes[2].reset(new BarnesHutTree((level+1), sf::FloatRect(x, y + subHeight, subWidth, subHeight)));
-        nodes[3].reset(new BarnesHutTree((level+1), sf::FloatRect(x + subWidth, y + subHeight, subWidth, subHeight)));
+        float subWidth = bounds.size.x / 2.f;
+        float subHeight = bounds.size.y / 2.f;
+        float x = bounds.position.x;
+        float y = bounds.position.y;
+        nodes[0].reset(new BarnesHutTree((level+1), {{x + subWidth, y}, {subWidth, subHeight}}));
+        nodes[1].reset(new BarnesHutTree((level+1), {{x, y}, {subWidth, subHeight}}));
+        nodes[2].reset(new BarnesHutTree((level+1), {{x, y + subHeight}, {subWidth, subHeight}}));
+        nodes[3].reset(new BarnesHutTree((level+1), {{x + subWidth, y + subHeight}, {subWidth, subHeight}}));
         for(auto i=0u;i<nodes.size();++i){
             nodes[i]->setMaxCapacity(maxCapacity);
             nodes[i]->setMaxLevel(maxLevel);
@@ -238,14 +238,14 @@
     }
     int BarnesHutTree::getNodeIndex(Particle* p) const noexcept{
         int index = -1;
-        float subWidth = bounds.width / 2;
-        float subHeight = bounds.height / 2;
-        float x = bounds.left;
-        float y = bounds.top;
-        sf::FloatRect rightTop(x + subWidth,y,subWidth,subHeight);
-        sf::FloatRect leftTop(x,y,subWidth,subHeight);
-        sf::FloatRect leftBottom(x,y+subHeight,subWidth,subHeight);
-        sf::FloatRect rightBottom(x+subWidth,y+subHeight,subWidth,subHeight);
+        float subWidth = bounds.size.x / 2.f;
+        float subHeight = bounds.size.y / 2.f;
+        float x = bounds.position.x;
+        float y = bounds.position.y;
+        sf::FloatRect rightTop({x + subWidth,y},{subWidth,subHeight});
+        sf::FloatRect leftTop({x,y},{subWidth,subHeight});
+        sf::FloatRect leftBottom({x,y+subHeight},{subWidth,subHeight});
+        sf::FloatRect rightBottom({x+subWidth,y+subHeight},{subWidth,subHeight});
 
         if(rightTop.contains(p->getPosition())){
             index = 0;

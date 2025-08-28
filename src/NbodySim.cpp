@@ -2,41 +2,33 @@
 #include <iostream>
 
 NbodySim::NbodySim(std::size_t numParticles)
-: mass(100.0)
+: win(sf::VideoMode({1290,720}), "NBodySim", sf::Style::Close)
+, bounds({0.f, 0.f}, {1290.f, 720.f})
+, particles()
+, bht(bounds)
+, mass(100.0)
+, FPSFont("data/Outwrite.ttf")
+, FPSText(FPSFont, "", 25u)
+, sizeText(FPSFont, "Particles: " + std::to_string(numParticles), 25u)
+, massText(FPSFont, "Mass: " + std::to_string(mass), 25u)
 , fastGen(false)
 , renderQuadtree(false)
 , blackHole(true)
-, win(sf::VideoMode(1290,720), "NBodySim", sf::Style::Close)
-, bounds(0,0,1290,720)
-, bht(bounds)
-, particles()
-, diceForX(0, bounds.width)
-, diceForY(0, bounds.height)
+, diceForX(0, bounds.size.x)
+, diceForY(0, bounds.size.y)
 , diceForMass(10,mass)
-, FPSText()
-, sizeText()
 , FPSUpdateTime(sf::Time::Zero)
 , FPSNumFrames(0)
-, FPSFont()
-, massText(){
+{
     bht.setMaxCapacity(1);
     bht.setMaxLevel(100000);
     particles.reserve(numParticles);
     for(auto i=0u;i<numParticles;++i){
         particles.emplace_back(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
     }
-    FPSFont.loadFromFile("data/Outwrite.ttf");
-    FPSText.setFont(FPSFont);
-    FPSText.setPosition(bounds.width-55,bounds.height-45);
-    FPSText.setCharacterSize(25u);
-    massText.setFont(FPSFont);
-    sizeText.setFont(FPSFont);
-    sizeText.setPosition(bounds.width - 255, 10);
-    sizeText.setCharacterSize(25u);
-    sizeText.setString("Particles: " + std::to_string(numParticles));
-    massText.setPosition(15,bounds.height-45);
-    massText.setCharacterSize(25u);
-    massText.setString("Mass: " + std::to_string(mass));
+    FPSText.setPosition({bounds.size.x-55,bounds.size.y-45});
+    sizeText.setPosition({bounds.size.x - 255, 10});
+    massText.setPosition({15,bounds.size.y-45});
 }
 void NbodySim::run() noexcept{
     sf::Clock clock;
@@ -46,9 +38,8 @@ void NbodySim::run() noexcept{
         timeSinceLastUpdate += dt;
         while(timeSinceLastUpdate > TimePerFrame){
             timeSinceLastUpdate -= TimePerFrame;
-            sf::Event event;
-            while(win.pollEvent(event)){
-                handleInput(event);
+            while(const auto event = win.pollEvent()){
+                handleInput(*event);
             }
             update(TimePerFrame);
         }
@@ -56,100 +47,93 @@ void NbodySim::run() noexcept{
         render();
     }
 }
-void NbodySim::handleInput(sf::Event& e) noexcept{
-    switch(e.type){
-        case sf::Event::Closed:
-                win.close();
-            break;
-        case sf::Event::KeyReleased:
-            if(e.key.code == sf::Keyboard::T){
-                renderQuadtree = !renderQuadtree;
+void NbodySim::handleInput(const sf::Event& e) noexcept{
+    if(e.is<sf::Event::Closed>()){
+        win.close();
+    }else if(const auto* keyReleased = e.getIf<sf::Event::KeyReleased>()){
+        if(keyReleased->scancode == sf::Keyboard::Scancode::T){
+            renderQuadtree = !renderQuadtree;
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::Left){
+            auto view = win.getView();
+            view.move({-100,0});
+            win.setView(view);
+            bounds = updateBounds(view);
+            bht.setBounds(bounds);
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::Right){
+            auto view = win.getView();
+            view.move({100,0});
+            win.setView(view);
+            bounds = updateBounds(view);
+            bht.setBounds(bounds);
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::Down){
+            auto view = win.getView();
+            view.move({0,100});
+            win.setView(view);
+            bounds = updateBounds(view);
+            bht.setBounds(bounds);
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::Up){
+            auto view = win.getView();
+            view.move({0,-100});
+            win.setView(view);
+            bounds = updateBounds(view);
+            bht.setBounds(bounds);
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::F){
+            fastGen = !fastGen;
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::B){
+            blackHole = !blackHole;
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::Hyphen){
+            auto view = win.getView();
+            view.zoom(1.1);
+            win.setView(view);
+            bounds = updateBounds(view);
+            bht.setBounds(bounds);
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::Equal){
+            auto view = win.getView();
+            view.zoom(0.9);
+            win.setView(view);
+            bounds = updateBounds(view);
+            bht.setBounds(bounds);
+        }
+        if(keyReleased->scancode == sf::Keyboard::Scancode::S){
+            for(auto i=0u;i<50;++i){
+                particles.emplace_back(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
             }
-            if(e.key.code == sf::Keyboard::Left){
-                auto view = win.getView();
-                view.move(-100,0);
-                win.setView(view);
-                bounds = updateBounds(view);
-                bht.setBounds(bounds);
-            }
-            if(e.key.code == sf::Keyboard::Right){
-                auto view = win.getView();
-                view.move(100,0);
-                win.setView(view);
-                bounds = updateBounds(view);
-                bht.setBounds(bounds);
-            }
-            if(e.key.code == sf::Keyboard::Down){
-                auto view = win.getView();
-                view.move(0,100);
-                win.setView(view);
-                bounds = updateBounds(view);
-                bht.setBounds(bounds);
-            }
-            if(e.key.code == sf::Keyboard::Up){
-                auto view = win.getView();
-                view.move(0,-100);
-                win.setView(view);
-                bounds = updateBounds(view);
-                bht.setBounds(bounds);
-            }
-            if(e.key.code == sf::Keyboard::F){
-                fastGen = !fastGen;
-            }
-            if(e.key.code == sf::Keyboard::B){
-                blackHole = !blackHole;
-            }
-            if(e.key.code == sf::Keyboard::Subtract){
-                auto view = win.getView();
-                view.zoom(1.1);
-                win.setView(view);
-                bounds = updateBounds(view);
-                bht.setBounds(bounds);
-            }
-            if(e.key.code == sf::Keyboard::Add){
-                auto view = win.getView();
-                view.zoom(0.9);
-                win.setView(view);
-                bounds = updateBounds(view);
-                bht.setBounds(bounds);
-            }
-            if(e.key.code == sf::Keyboard::S){
-                for(auto i=0u;i<50;++i){
-                    particles.emplace_back(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
-                }
-            }
-            break;
-        case sf::Event::KeyPressed:
-            if(e.key.code == sf::Keyboard::LShift){
-                mass += 10.0;
-                massText.setString("mass: " + std::to_string(mass));
-            }
-            if(e.key.code == sf::Keyboard::LControl){
-                mass -= 10.0;
-                mass = std::max(10.0f, mass);
-                massText.setString("mass: " + std::to_string(mass));
-            }
-            break;
-        case sf::Event::MouseButtonReleased:
-            if(e.mouseButton.button == sf::Mouse::Button::Right){
-                particles.clear();
-            }
-            if((e.mouseButton.button == sf::Mouse::Button::Left) && !fastGen){
-                sf::Vector2f pos = win.mapPixelToCoords(sf::Mouse::getPosition(win));
-                particles.emplace_back(pos,mass);
-            }
-            break;
-        default:
-            break;
+        }
+    }else if(const auto* keyPressed = e.getIf<sf::Event::KeyPressed>()){
+        if(keyPressed->scancode == sf::Keyboard::Scancode::LShift){
+            mass += 10.0;
+            massText.setString("mass: " + std::to_string(mass));
+        }
+        if(keyPressed->scancode == sf::Keyboard::Scancode::LControl){
+            mass -= 10.0;
+            mass = std::max(10.0f, mass);
+            massText.setString("mass: " + std::to_string(mass));
+        }
+    }else if(const auto* mouseButtonReleased = e.getIf<sf::Event::MouseButtonReleased>()){
+        if(mouseButtonReleased->button == sf::Mouse::Button::Right){
+            particles.clear();
+        }
+        if((mouseButtonReleased->button == sf::Mouse::Button::Left) && !fastGen){
+            sf::Vector2f pos = win.mapPixelToCoords(mouseButtonReleased->position);
+            particles.emplace_back(pos,mass);
+        }
     }
 }
 sf::FloatRect NbodySim::updateBounds(const sf::View& view) noexcept{
     sf::FloatRect b;
-    b.left = view.getCenter().x - (view.getSize().x / 2.0);
-    b.top = view.getCenter().y - (view.getSize().y / 2.0);
-    b.width = view.getSize().x * view.getViewport().width;
-    b.height = view.getSize().y * view.getViewport().height;
-    std::cout << "[" << b.left << ", " << b.top << "]-[" << b.width << ", " << b.height << "]" << std::endl;
+    b.position.x = view.getCenter().x - (view.getSize().x / 2.0f);
+    b.position.y = view.getCenter().y - (view.getSize().y / 2.0f);
+    b.size.x = view.getSize().x;
+    b.size.y = view.getSize().y;
+    std::cout << "[" << b.position.x << ", " << b.position.y << "]-[" << b.size.x << ", " << b.size.y << "]" << std::endl;
     return b;
 }
 void NbodySim::update(sf::Time dt) noexcept{
@@ -161,12 +145,12 @@ void NbodySim::update(sf::Time dt) noexcept{
     }
     particles.erase(std::remove_if(std::begin(particles),std::end(particles),
         [&](const Particle& p){
-            return (!bounds.contains(p.getPosition().x,p.getPosition().y)) || (p.getMass() == 0.0);
+            return (!bounds.contains(p.getPosition())) || (p.getMass() == 0.0);
     }),std::end(particles));
     sizeText.setString("Particles: " + std::to_string(particles.size()));
     bht.clear();
     for(auto& p:particles){
-        if(bounds.contains(p.getPosition().x, p.getPosition().y)){
+        if(bounds.contains(p.getPosition())){
             bht.insert(&p);
         }
     }
@@ -209,10 +193,10 @@ void NbodySim::render() noexcept{
     win.clear(sf::Color::Black);
     std::vector<sf::Vertex> va;
     va.reserve(particles.size());
-    for(auto& p:particles){
-        va.emplace_back(p.getPosition(),p.color);
+    for(const auto& p:particles){
+        va.push_back(p);
     }
-    win.draw(va.data(), va.size(),sf::Points);
+    win.draw(va.data(), va.size(), sf::PrimitiveType::Points);
     //win.draw(particles.data(), particles.size(), sf::Points); // sfml cache problem?
     if(renderQuadtree){
         bht.render(win);

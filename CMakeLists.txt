@@ -18,13 +18,11 @@ endif(BUILD_STATIC)
 
 project(NBodySim)
 
-SET(CMAKE_INCLUDE_PATH ${CMAKE_SOURCE_DIR})
-
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-
-FILE(GLOB_RECURSE NBodySim_SOURCES "src/*.cpp" "src/*.hpp" "${SPPAR_ROOT}/include/*.hpp")
+FILE(GLOB_RECURSE NBodySim_SOURCES "src/*.cpp" "src/*.hpp")
 
 add_executable(NBodySim ${NBodySim_SOURCES})
+
+target_include_directories(NBodySim PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 ################################################################################
 ### Dependencies.
@@ -33,8 +31,7 @@ add_executable(NBodySim ${NBodySim_SOURCES})
 #sfml
 find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 if(SFML_FOUND)
-	include_directories(${SFML_INCLUDE_DIR})
-	target_link_libraries(NBodySim ${SFML_LIBRARIES})
+	target_link_libraries(NBodySim PRIVATE SFML::Graphics SFML::Window SFML::System)
 endif(SFML_FOUND)
 
 if(WIN32)

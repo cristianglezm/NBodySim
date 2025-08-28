@@ -1,13 +1,13 @@
 #include "Particle.hpp"
 
 Particle::Particle()
-: sf::Vertex({0.f,0.f}, sf::Color::White)
+: sf::Vertex{{0.f,0.f}, sf::Color::White}
 , mass(15)
 , active(true)
 , force(0.0,0.0)
 , velocity(0.0,0.0){}
 Particle::Particle(const sf::Vector2f& position, float mass)
-: sf::Vertex(position, sf::Color::White)
+: sf::Vertex{position, sf::Color::White}
 , mass(mass)
 , active(true)
 , force(0.0,0.0)
