@@ -25,7 +25,7 @@ jobs:
 
     - name: cache
       id: cache-sfml
-      uses: actions/cache@v5
+      uses: actions/cache@v4
       with:
         path: SFML/build/install
         key: ${{ matrix.platform.name }}-${{ matrix.type.name }}-${{ matrix.config.name }}
