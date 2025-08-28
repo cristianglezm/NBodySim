@@ -104,7 +104,7 @@ void NbodySim::handleInput(const sf::Event& e) noexcept{
             bht.setBounds(bounds);
         }
         if(keyReleased->scancode == sf::Keyboard::Scancode::S){
-            for(auto i=0u;i<50;++i){
+            for(auto i=0u;i<500;++i){
                 particles.emplace_back(sf::Vector2f(diceForX(engine),diceForY(engine)),diceForMass(engine));
             }
         }
@@ -156,7 +156,7 @@ void NbodySim::update(sf::Time dt) noexcept{
         }
     }
     bht.parallelComputeMassDistribution();
-    //bht.computeMassDistribution();
+//    bht.computeMassDistribution();
     if(blackHole && !particles.empty()){
         particles[0].setColor(sf::Color::Red);
         particles[0].setMass(mass * 100);
